@@ -1,0 +1,70 @@
+---
+interface Props{
+  header?:(_props:Props)=>any;
+  title:string
+}
+
+const { title,header }=Astro.props;
+---
+
+<html lang="ja">
+	<head>
+		<meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+    <script is:inline src="/script/dexie.js"></script>
+    <script is:inline>
+      // const db=new Dexie("RootDB");
+      // db.version(1).stores({
+      //   tasks:"++id,title"
+      // });
+    </script>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+    {
+      header?header:null
+    }
+	</head>
+	<body>
+    <slot/>
+	</body>
+</html>
+
+<style>
+*{
+  font-family: "Noto Sans JP", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+body{
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  scrollbar-gutter: stable;
+  margin: 0;
+}
+</style>
+
+<style is:global>
+@property --accent-color{
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #e6da5c;
+}
+
+h1{
+  font-weight: 400;
+}
+
+h2{
+  font-weight: 400;
+}
+</style>

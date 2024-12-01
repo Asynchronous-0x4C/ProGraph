@@ -1,0 +1,23 @@
+---
+import Card from "../components/Card.astro";
+import Base from "../layouts/Base.astro";
+
+
+---
+
+<Base title="ProGraph">
+  <div id="main-box">
+    <h1>ProGraphへようこそ!</h1>
+    <p>ProGraphは、Progress(進捗)+Graph(グラフ)というコンセプトからできた、視覚的な分かりやすさを追求したタスク管理ツールです。</p>
+    <p>積み重なったタスクも、グラフとして見れば優先順位を整理できる...はず。</p>
+    <Card img="./img/bars-progress.svg" link="./tasks/" title="進捗の管理" description="進捗を管理するためのツールです。\nグラフによる可視化機能も完備!"></Card>
+  </div>
+</Base>
+
+<style>
+#main-box{
+  padding: 40px;
+  background-color: #eee;
+  flex-grow: 1;
+}
+</style>

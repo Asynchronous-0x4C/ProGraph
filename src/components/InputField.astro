@@ -1,0 +1,27 @@
+---
+interface Props{
+  placeholder:string;
+  id:string;
+  size?:string;
+}
+
+const {placeholder,id,size}=Astro.props;
+---
+
+<input type="text" name="title" class="input-field" placeholder={placeholder} style={size?`font-size:${size};`:""} id={id}>
+
+<style>
+.input-field{
+  border: none;
+  outline: none;
+  border-bottom: 2px solid #ddd;
+  background-color: transparent;
+  font-size: 1rem;
+  font-weight: 300;
+  text-align: center;
+  width: min(100%,500px);
+  &:focus{
+    border-bottom: 2px solid #4af;
+  }
+}
+</style>

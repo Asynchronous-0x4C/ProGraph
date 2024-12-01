@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-5hce7sga> <head><meta charset="utf-8"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet"><script src="/script/dexie.js"></script><script>
+      // const db=new Dexie("RootDB");
+      // db.version(1).stores({
+      //   tasks:"++id,title"
+      // });
+    </script><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v4.16.16"><title>Tasks</title><style>.add-button[data-astro-cid-rx32tvzr]{--ab-border-color: #888;border:2px dashed var(--ab-border-color);border-radius:1rem;width:100%;cursor:pointer;&:hover{--ab-border-color: rgb(0, 145, 255)}}.add-title[data-astro-cid-rx32tvzr]{color:var(--ab-border-color)}.input-field[data-astro-cid-at2cjfen]{border:none;outline:none;border-bottom:2px solid #ddd;background-color:transparent;font-size:1rem;font-weight:300;text-align:center;width:min(100%,500px);&:focus{border-bottom:2px solid #4af}}.task-list-content{text-decoration:none;color:#333;border-radius:1rem;box-shadow:0 0 4px #0004;padding-inline:1rem;background-color:#ddd;width:calc(100% - 2rem);h2{margin-block:.5rem}>div{display:flex;align-items:center;>p{margin:0;margin-inline-start:.5rem}}progress{height:1rem;width:calc(100% - 3rem)}}@media (min-width:1200px){.task-list-content{width:calc(50% - 3rem)}}.task{margin-block:.5rem;display:flex;align-items:center;.checkbox{border:1px solid #888;border-radius:.2rem;background-color:#ddd;margin-inline-end:.5rem;width:1rem;height:1rem;&.completed{background-color:#4af}}.task-name{border:none;outline:none;border-bottom:1px solid #ddd;background-color:transparent;font-size:1rem;width:fit-content}}#main-box[data-astro-cid-enz3liwp]{padding:40px;background-color:#eee;flex-grow:1}#page[data-astro-cid-enz3liwp]{display:none;padding:40px;background-color:#eee;flex-grow:1}#task-list-body[data-astro-cid-enz3liwp]{display:flex;flex-wrap:wrap;gap:1rem;padding-block:2rem}#task-add-dialog[data-astro-cid-enz3liwp]{position:fixed;margin-inline:auto;background-color:#eee;border:none;border-radius:1rem;box-shadow:0 0 4px #0004}#add-content[data-astro-cid-enz3liwp]{position:fixed;right:30px;bottom:30px;width:50px;height:50px;border:none;border-radius:25px;font-size:50px;color:#333;background-color:#4af;cursor:pointer;box-shadow:0 0 4px #0004}.add-config[data-astro-cid-enz3liwp]{display:flex;flex-direction:column;align-items:center;gap:1rem;overflow-y:scroll;padding:1rem;min-height:50vh;min-width:50vw;margin-block-end:1rem}.add-buttons[data-astro-cid-enz3liwp]{display:flex;justify-content:center;gap:1rem;button{border:none;border-radius:.5rem;font-size:1.5rem;font-weight:300;cursor:pointer;background-color:#f8f8f8;padding-inline:1rem;user-select:none;&.add-cancel{background-color:#ddd}&.add-enter{background-color:#4af}}}
+@property --accent-color{syntax: "<color>"; inherits: false; initial-value: #e6da5c;}h1,h2{font-weight:400}[data-astro-cid-5hce7sga]{font-family:Noto Sans JP,serif;font-optical-sizing:auto;font-weight:300;font-style:normal}body{position:absolute;left:0;top:0;min-width:100vw;min-height:100vh;display:flex;flex-direction:column;scrollbar-gutter:stable;margin:0}
+</style><script type="module">const e=new URL(location.href).searchParams.get("p");if(e!=null){const t=document.getElementById("main-box");t.style.display="none";const a=document.getElementById("page");a.style.display="block",document.head.dataset.title=e}
+</script></head> <body data-astro-cid-5hce7sga>  <div id="main-box" data-astro-cid-enz3liwp> <h1 data-astro-cid-enz3liwp>進捗の管理</h1> <p data-astro-cid-enz3liwp>このページでは、進捗の管理を行うことができます。</p> <p data-astro-cid-enz3liwp>焦らず、着実に進めていきましょう。</p> <button class="add-button" onpointerdown="addTask()" data-astro-cid-rx32tvzr> <h2 class="add-title" data-astro-cid-rx32tvzr>+ 新規作成</h2> </button>  <div id="task-list-body" data-astro-cid-enz3liwp></div> <dialog id="task-add-dialog" data-astro-cid-enz3liwp> <div class="add-config" data-astro-cid-enz3liwp> <input type="text" name="title" class="input-field" placeholder="タイトルを入力" style="font-size:2rem;" id="input-title" data-astro-cid-at2cjfen>  <input type="text" name="title" class="input-field" placeholder="説明を入力" style="font-size:1.5rem;" id="input-description" data-astro-cid-at2cjfen>  </div> <div class="add-buttons" data-astro-cid-enz3liwp> <button class="add-cancel" onpointerdown="document.getElementById('task-add-dialog').close()" data-astro-cid-enz3liwp>キャンセル</button> <button class="add-enter" onpointerdown="constructTaskPage()" data-astro-cid-enz3liwp>作成</button> </div> </dialog> </div> <div id="page" data-astro-cid-enz3liwp> <h1 id="page-title" data-astro-cid-enz3liwp></h1> <p id="page-description" data-astro-cid-enz3liwp></p> <p style="color:#f44;" data-astro-cid-enz3liwp>現在、実装の都合上Local Storageを利用しています。セキュリティが弱いので、機密情報は記載しないでください。</p> <button id="add-content" onpointerdown="addTaskContent()" data-astro-cid-enz3liwp>+</button> <div id="page-content" data-astro-cid-enz3liwp></div> </div>   </body></html>   <script>
+window.addEventListener('load',()=>{
+  updateTaskList();
+  const title=document.head.dataset.title;
+  if(!title)return;
+  document.getElementById("page-title").textContent=title;
+  const data=JSON.parse(localStorage.getItem(title));
+  document.getElementById("page-description").textContent=data.description;
+});
+
+function addTask(){
+  document.getElementById("input-title").value="";
+  document.getElementById("input-description").value="";
+  const dialog=document.getElementById('task-add-dialog');
+  dialog.showModal();
+}
+
+function constructTaskPage(){
+  const title=document.getElementById("input-title").value.trim();
+  const description=document.getElementById("input-description").value.trim();
+  if(title===""){
+
+  }else{
+    const item=localStorage.getItem("task-list");
+    const list=(item===null?[]:item.split(","));
+    list.push(title);console.log(list);
+    localStorage.setItem("task-list",list.join(","));
+    localStorage.setItem(title,`{"title":"${title}","description":"${description}","date":"${Date.now()}","progress":0,"content":[]}`)
+    const dialog=document.getElementById('task-add-dialog');
+    dialog.close();
+    location.href=`./?p=${title}`;
+  }
+}
+
+function updateTaskList(){
+  const item=localStorage.getItem("task-list");
+  const list=(item===null?[]:item.split(","));
+  const target=document.getElementById("task-list-body");
+  target.innerHTML="";
+  list.forEach(l=>{
+    const data=JSON.parse(localStorage.getItem(l));
+    const elem=`<a href="./?p=${data.title}" class="task-list-content"><h2>${data.title}</h2><p>${data.description}</p><div><progress max="100" value="${data.progress}"></progress><p>${data.progress}%</p></div></a>`;
+    target.innerHTML+=elem;
+  })
+}
+
+function addTaskContent(){
+  const target=document.getElementById("page-content");
+  const div=document.createElement("div");
+  div.classList.add("task");
+  const box=document.createElement("button");
+  box.classList.add("checkbox");
+  box.onpointerdown=()=>{box.classList.toggle('completed')};
+  const input=document.createElement("input");
+  input.type="text";
+  input.classList.add("task-name");
+  input.addEventListener('keydown',(e)=>{
+    if(input.value===""&&e.key==="Backspace")target.removeChild(div);
+    if(input.value!==""&&e.key==="Enter")addTaskContent();
+  });
+  div.appendChild(box);
+  div.appendChild(input);
+  target.appendChild(div);
+  input.focus();
+}
+</script> 

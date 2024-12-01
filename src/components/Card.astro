@@ -1,0 +1,51 @@
+---
+interface Props{
+  img:string;
+  link:string;
+  title:string;
+  description:string;
+}
+
+const {img,link,title,description}=Astro.props;
+---
+
+<a class="card-body" href={link}>
+  <img class="card-img" src={img} alt="image"/>
+  <div class="card-text">
+    <h2>{title}</h2>
+    <p>{description}</p>
+  </div>
+</a>
+
+<style>
+.card-body{
+  max-width: 100%;
+  display: flex;
+  gap: 1rem;
+  margin-block: 2rem;
+  padding: min(2rem,3vw);
+  border-radius: 1rem;
+  background-color: #f8f8f8;
+  box-shadow: 0 0 8px #0004;
+  text-decoration: none;
+  color: #333;
+}
+.card-img{
+  width: min(150px,20vw);
+  border-radius: 0.5rem;
+  background-color: var(--accent-color);
+  margin-block: auto;
+}
+.card-text{
+  flex-grow: 1;
+  h2{
+    margin: 0;
+  }
+  p{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: min(1rem,3vw);
+    margin-block: min(1em,2vw);
+  }
+}
+</style>

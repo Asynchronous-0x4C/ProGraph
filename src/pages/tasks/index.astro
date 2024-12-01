@@ -1,0 +1,242 @@
+---
+import AddButton from "../../components/AddButton.astro";
+import Card from "../../components/Card.astro";
+import InputField from "../../components/InputField.astro";
+import Base from "../../layouts/Base.astro";
+---
+
+<Base title="Tasks">
+  <div id="main-box">
+    <h1>進捗の管理</h1>
+    <p>このページでは、進捗の管理を行うことができます。</p>
+    <p>焦らず、着実に進めていきましょう。</p>
+    <AddButton fn={"addTask()"}></AddButton>
+    <div id="task-list-body"></div>
+    <dialog id="task-add-dialog">
+      <div class="add-config">
+        <InputField placeholder="タイトルを入力" size="2rem" id="input-title"></InputField>
+        <InputField placeholder="説明を入力" size="1.5rem" id="input-description"></InputField>
+      </div>
+      <div class="add-buttons">
+        <button class="add-cancel" onpointerdown="document.getElementById('task-add-dialog').close()">キャンセル</button>
+        <button class="add-enter" onpointerdown="constructTaskPage()">作成</button>
+      </div>
+    </dialog>
+  </div>
+  <div id="page">
+    <h1 id="page-title"></h1>
+    <p id="page-description"></p>
+    <p style="color:#f44;">現在、実装の都合上Local Storageを利用しています。セキュリティが弱いので、機密情報は記載しないでください。</p>
+    <button id="add-content" onpointerdown="addTaskContent()">+</button>
+    <div id="page-content">
+    </div>
+  </div>
+</Base>
+
+<style>
+#main-box{
+  padding: 40px;
+  background-color: #eee;
+  flex-grow: 1;
+}
+#page{
+  display: none;
+  padding: 40px;
+  background-color: #eee;
+  flex-grow: 1;
+}
+#task-list-body{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-block: 2rem;
+}
+#task-add-dialog{
+  position: fixed;
+  margin-inline: auto;
+  background-color: #eee;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 0 4px #0004;
+}
+#add-content{
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 25px;
+  font-size: 50px;
+  color: #333;
+  background-color: #4af;
+  cursor: pointer;
+  box-shadow: 0 0 4px #0004;
+}
+.add-config{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  overflow-y: scroll;
+  padding: 1rem;
+  min-height: 50vh;
+  min-width: 50vw;
+  margin-block-end: 1rem;
+}
+.add-buttons{
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  button{
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 300;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    padding-inline: 1rem;
+    user-select: none;
+    &.add-cancel{
+      background-color: #ddd;
+    }
+    &.add-enter{
+      background-color: #4af;
+    }
+  }
+}
+</style>
+
+<script>
+const page=new URL(location.href).searchParams.get('p');
+if(page!=null){
+  const target=document.getElementById("main-box")!;
+  target.style.display="none";
+  const _page=document.getElementById("page")!;
+  _page.style.display="block";
+  document.head.dataset.title=page;
+}
+</script>
+
+<script is:inline>
+window.addEventListener('load',()=>{
+  updateTaskList();
+  const title=document.head.dataset.title;
+  if(!title)return;
+  document.getElementById("page-title").textContent=title;
+  const data=JSON.parse(localStorage.getItem(title));
+  document.getElementById("page-description").textContent=data.description;
+});
+
+function addTask(){
+  document.getElementById("input-title").value="";
+  document.getElementById("input-description").value="";
+  const dialog=document.getElementById('task-add-dialog');
+  dialog.showModal();
+}
+
+function constructTaskPage(){
+  const title=document.getElementById("input-title").value.trim();
+  const description=document.getElementById("input-description").value.trim();
+  if(title===""){
+
+  }else{
+    const item=localStorage.getItem("task-list");
+    const list=(item===null?[]:item.split(","));
+    list.push(title);console.log(list);
+    localStorage.setItem("task-list",list.join(","));
+    localStorage.setItem(title,`{"title":"${title}","description":"${description}","date":"${Date.now()}","progress":0,"content":[]}`)
+    const dialog=document.getElementById('task-add-dialog');
+    dialog.close();
+    location.href=`./?p=${title}`;
+  }
+}
+
+function updateTaskList(){
+  const item=localStorage.getItem("task-list");
+  const list=(item===null?[]:item.split(","));
+  const target=document.getElementById("task-list-body");
+  target.innerHTML="";
+  list.forEach(l=>{
+    const data=JSON.parse(localStorage.getItem(l));
+    const elem=`<a href="./?p=${data.title}" class="task-list-content"><h2>${data.title}</h2><p>${data.description}</p><div><progress max="100" value="${data.progress}"></progress><p>${data.progress}%</p></div></a>`;
+    target.innerHTML+=elem;
+  })
+}
+
+function addTaskContent(){
+  const target=document.getElementById("page-content");
+  const div=document.createElement("div");
+  div.classList.add("task");
+  const box=document.createElement("button");
+  box.classList.add("checkbox");
+  box.onpointerdown=()=>{box.classList.toggle('completed')};
+  const input=document.createElement("input");
+  input.type="text";
+  input.classList.add("task-name");
+  input.addEventListener('keydown',(e)=>{
+    if(input.value===""&&e.key==="Backspace")target.removeChild(div);
+    if(input.value!==""&&e.key==="Enter")addTaskContent();
+  });
+  div.appendChild(box);
+  div.appendChild(input);
+  target.appendChild(div);
+  input.focus();
+}
+</script>
+
+<style is:global>
+.task-list-content{
+  text-decoration: none;
+  color: #333;
+  border-radius: 1rem;
+  box-shadow: 0 0 4px #0004;
+  padding-inline: 1rem;
+  background-color: #ddd;
+  width: calc(100% - 2rem);
+  h2{
+    margin-block: 0.5rem;
+  }
+  >div{
+    display: flex;
+    align-items: center;
+    >p{
+      margin: 0;
+      margin-inline-start: 0.5rem;
+    }
+  }
+  progress{
+    height: 1rem;
+    width: calc(100% - 3rem);
+  }
+}
+@media (min-width:1200px) {
+  .task-list-content{
+    width: calc(50% - 3rem);
+  }
+}
+.task{
+  margin-block: 0.5rem;
+  display: flex;
+  align-items: center;
+  .checkbox{
+    border: 1px solid #888;
+    border-radius: 0.2rem;
+    background-color: #ddd;
+    margin-inline-end: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    &.completed{
+      background-color: #4af;
+    }
+  }
+  .task-name{
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #ddd;
+    background-color: transparent;
+    font-size: 1rem;
+    width: fit-content;
+  }
+}
+</style>

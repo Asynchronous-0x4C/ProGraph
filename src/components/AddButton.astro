@@ -1,0 +1,30 @@
+---
+interface Props{
+  fn?:(()=>any)|string;
+}
+
+const {fn}=Astro.props;
+let fn_str=fn?.toString();
+if(typeof fn!=="string")fn_str=fn_str?.substring(fn_str.indexOf('{')+1,fn_str.lastIndexOf('}'));
+---
+
+<button class="add-button" onpointerdown={fn_str}>
+  <h2 class="add-title">+ 新規作成</h2>
+</button>
+
+<style>
+.add-button{
+  --ab-border-color: #888;
+  border: 2px dashed var(--ab-border-color);
+  border-radius: 1rem;
+  width: 100%;
+  cursor: pointer;
+  &:hover{
+    --ab-border-color: rgb(0, 145, 255);
+  }
+}
+
+.add-title{
+  color: var(--ab-border-color);
+}
+</style>
